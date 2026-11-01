@@ -28,7 +28,7 @@ public class RegistrationController {
     public RegistrationResponse register(@PathVariable Long eventId,
                                          @Valid @RequestBody RegistrationRequest request) {
         Event event = findEvent(eventId);
-        if (registrationRepository.existsByEventIdAndEmailIgnoreCase(eventId, request.email())) {
+        if (registrationRepository.existsByEvent_IdAndEmailIgnoreCase(eventId, request.email())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "This email is already registered for the event");
         }
@@ -40,14 +40,14 @@ public class RegistrationController {
     @GetMapping
     public List<RegistrationResponse> getRegistrations(@PathVariable Long eventId) {
         findEvent(eventId);
-        return registrationRepository.findAllByEventIdOrderByRegisteredAtAsc(eventId)
+        return registrationRepository.findAllByEvent_IdOrderByRegisteredAtAsc(eventId)
                 .stream().map(RegistrationResponse::from).toList();
     }
 
     @GetMapping("/count")
     public RegistrationCount getRegistrationCount(@PathVariable Long eventId) {
         findEvent(eventId);
-        return new RegistrationCount(registrationRepository.countByEventId(eventId));
+        return new RegistrationCount(registrationRepository.countByEvent_Id(eventId));
     }
 
     @DeleteMapping("/{registrationId}")
