@@ -2,7 +2,7 @@
 
 A full-stack campus event management application built with React, Spring Boot, and MySQL.
 
-> **Project status:** Initial MVP scaffold. Event CRUD is the first milestone; authentication, registration, and role-based access are planned, not yet implemented.
+> **Project status:** MVP with event management and attendee registration APIs. Login, verified user accounts, organizer/admin permissions, and production hosting remain future work.
 
 ## Stack
 
@@ -18,7 +18,11 @@ A full-stack campus event management application built with React, Spring Boot, 
 - Edit event details
 - Delete events
 - Validate required event fields
-- Persist events in MySQL
+- Register attendees using name and email
+- Prevent duplicate registrations for the same event/email
+- View attendee counts and registration records
+- Cancel an event registration
+- Persist events and registrations in MySQL
 
 ## Run locally
 
@@ -64,6 +68,10 @@ Open the Vite URL shown in the terminal (normally `http://localhost:5173`).
 | POST | `/api/events` | Create an event |
 | PUT | `/api/events/{id}` | Update an event |
 | DELETE | `/api/events/{id}` | Delete an event |
+| POST | `/api/events/{eventId}/registrations` | Register an attendee |
+| GET | `/api/events/{eventId}/registrations` | List registrations (name and registration time; email is not returned) |
+| GET | `/api/events/{eventId}/registrations/count` | Get attendee count |
+| DELETE | `/api/events/{eventId}/registrations/{registrationId}` | Cancel a registration |
 
 Example request body:
 
@@ -100,11 +108,11 @@ CampusConnect/
 
 - [x] Initial React + Spring Boot + MySQL scaffold
 - [x] Event CRUD API and UI
-- [ ] Automated backend and frontend tests
-- [ ] User registration and authentication
-- [ ] Student event registration
-- [ ] Admin and organizer roles
-- [ ] Deployment guide and production configuration
+- [x] Event attendee registration API with duplicate prevention
+- [ ] Automated end-to-end frontend tests
+- [ ] User accounts and secure authentication
+- [ ] Admin and organizer roles with authorization
+- [ ] Production API hosting, secrets, and deployment configuration
 
 ## Contributing
 
