@@ -10,7 +10,7 @@ import java.util.List;
 /** Exposes CRUD endpoints for campus events. */
 @RestController
 @RequestMapping("/api/events")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5173", "https://anuragchaurasiya.github.io"})
 public class EventController {
     private final EventRepository eventRepository;
 
@@ -32,10 +32,8 @@ public class EventController {
     @ResponseStatus(HttpStatus.CREATED)
     public Event createEvent(@Valid @RequestBody Event request) {
         return eventRepository.save(new Event(
-                request.getTitle(),
-                request.getDescription(),
-                request.getVenue(),
-                request.getEventDate()
+                request.getTitle(), request.getDescription(),
+                request.getVenue(), request.getEventDate()
         ));
     }
 
