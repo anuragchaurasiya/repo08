@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="520" viewBox="0 0 1600 520" role="img" aria-labelledby="title desc">
+<title id="title">CampusConnect — Bring campus events together</title>
+<desc id="desc">A modern blue and violet illustration of campus event cards connected together.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101b3c"/><stop offset=".55" stop-color="#253c85"/><stop offset="1" stop-color="#6546a8"/></linearGradient>
+  <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#6ee7f9"/><stop offset="1" stop-color="#a78bfa"/></linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#080d22" flood-opacity=".35"/></filter>
+</defs>
+<rect width="1600" height="520" rx="34" fill="url(#bg)"/>
+<circle cx="1390" cy="60" r="220" fill="#a78bfa" opacity=".10"/><circle cx="1260" cy="480" r="260" fill="#38bdf8" opacity=".10"/>
+<path d="M0 410 Q300 330 570 430 T1100 410 T1600 360 V520 H0Z" fill="#0b1534" opacity=".22"/>
+<g transform="translate(112 120)">
+  <rect x="0" y="0" width="78" height="78" rx="22" fill="url(#accent)"/>
+  <path d="M20 40h38M39 21v38" stroke="#13224d" stroke-width="8" stroke-linecap="round"/>
+  <text x="0" y="145" fill="#fff" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="70" font-weight="800">CampusConnect</text>
+  <text x="3" y="205" fill="#dbeafe" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="29">Discover. Organize. Connect.</text>
+  <text x="3" y="260" fill="#c7d2fe" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="20">A campus event management platform</text>
+  <g transform="translate(0 315)"><rect width="180" height="44" rx="22" fill="#ffffff" opacity=".14"/><text x="90" y="29" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="16" font-weight="700">REACT • SPRING BOOT</text></g>
+</g>
+<g filter="url(#shadow)" transform="translate(930 92)">
+  <rect x="40" y="36" width="390" height="280" rx="24" fill="#fff"/>
+  <rect x="40" y="36" width="390" height="72" rx="24" fill="#f1f5ff"/><rect x="40" y="84" width="390" height="24" fill="#f1f5ff"/>
+  <circle cx="75" cy="72" r="8" fill="#8b5cf6"/><circle cx="101" cy="72" r="8" fill="#38bdf8"/><circle cx="127" cy="72" r="8" fill="#34d399"/>
+  <rect x="72" y="136" width="148" height="105" rx="14" fill="#dbeafe"/><path d="M72 210l45-42 34 30 28-23 41 35v31H72Z" fill="#60a5fa"/>
+  <rect x="245" y="140" width="150" height="15" rx="7" fill="#1e2b55"/><rect x="245" y="170" width="115" height="10" rx="5" fill="#94a3b8"/><rect x="245" y="193" width="135" height="10" rx="5" fill="#cbd5e1"/><rect x="245" y="220" width="100" height="30" rx="15" fill="#6d5ce8"/>
+  <rect x="0" y="245" width="250" height="145" rx="20" fill="#fff"/><rect x="22" y="268" width="60" height="60" rx="14" fill="#ede9fe"/><path d="M52 279v38M37 298h30" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/><rect x="100" y="272" width="125" height="12" rx="6" fill="#1e2b55"/><rect x="100" y="296" width="95" height="9" rx="4" fill="#94a3b8"/><rect x="22" y="350" width="205" height="18" rx="9" fill="#e0e7ff"/>
+  <rect x="300" y="300" width="220" height="110" rx="20" fill="#e0f2fe"/><circle cx="340" cy="355" r="22" fill="#38bdf8"/><path d="M329 355l8 8 16-18" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><rect x="375" y="340" width="115" height="11" rx="5" fill="#1e3a8a"/><rect x="375" y="362" width="90" height="9" rx="4" fill="#64748b"/>
+</g>
+</svg>
