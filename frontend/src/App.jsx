@@ -1,13 +1,52 @@
 import { useEffect, useState } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api/events";
+const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === "true";
+const STORAGE_KEY = "campusconnect-demo-events";
 const emptyForm = { title: "", description: "", venue: "", eventDate: "" };
 
-function formatDate(value) {
-  return new Date(value).toLocaleString([], {
-    dateStyle: "medium",
-    timeStyle: "short",
+function readDemoEvents() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+async function requestEvents(method = "GET", id = "", payload = null) {
+  if (DEMO_MODE) {
+    const events = readDemoEvents();
+    if (method === "GET") return events;
+    if (method === "POST") {
+      const created = { ...payload, id: Date.now() };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([created, ...events]));
+      return created;
+    }
+    if (method === "PUT") {
+      const updated = events.map((item) => item.id === Number(id) ? { ...payload, id: Number(id) } : item);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated.find((item) => item.id === Number(id));
+    }
+    if (method === "DELETE") {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(events.filter((item) => item.id !== Number(id))));
+      return null;
+    }
+  }
+
+  const response = await fetch(id ? `${API_URL}/${id}` : API_URL, {
+    method,
+    headers: payload ? { "Content-Type": "application/json" } : undefined,
+    body: payload ? JSON.stringify(payload) : undefined,
   });
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || "The request could not be completed.");
+  }
+  return response.status === 204 ? null : response.json();
+}
+
+function formatDate(value) {
+  return new Date(value).toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
 }
 
 export default function App() {
@@ -22,19 +61,15 @@ export default function App() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch(API_URL);
-      if (!response.ok) throw new Error("Could not load events. Is the API running?");
-      setEvents(await response.json());
+      setEvents(await requestEvents());
     } catch (err) {
-      setError(err.message || "Something went wrong while loading events.");
+      setError(err.message || "Could not load events. Please try again.");
     } finally {
       setLoading(false);
     }
   }
 
-  useEffect(() => {
-    loadEvents();
-  }, []);
+  useEffect(() => { loadEvents(); }, []);
 
   function updateField(event) {
     setForm({ ...form, [event.target.name]: event.target.value });
@@ -61,15 +96,7 @@ export default function App() {
     setSaving(true);
     setError("");
     try {
-      const response = await fetch(editingId ? `${API_URL}/${editingId}` : API_URL, {
-        method: editingId ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, eventDate: form.eventDate }),
-      });
-      if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || "Could not save the event.");
-      }
+      await requestEvents(editingId ? "PUT" : "POST", editingId, form);
       resetForm();
       await loadEvents();
     } catch (err) {
@@ -83,8 +110,7 @@ export default function App() {
     if (!window.confirm("Delete this event?")) return;
     setError("");
     try {
-      const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-      if (!response.ok) throw new Error("Could not delete the event.");
+      await requestEvents("DELETE", id);
       setEvents((current) => current.filter((item) => item.id !== id));
       if (editingId === id) resetForm();
     } catch (err) {
@@ -95,7 +121,7 @@ export default function App() {
   return (
     <main className="page-shell">
       <header className="topbar">
-        <a className="brand" href="/">Campus<span>Connect</span></a>
+        <a className="brand" href="./">Campus<span>Connect</span></a>
         <span className="topbar-note">CAMPUS EVENT HUB</span>
       </header>
 
@@ -103,6 +129,7 @@ export default function App() {
         <p className="eyebrow">YOUR CAMPUS. YOUR COMMUNITY.</p>
         <h1>Make campus moments <span>happen.</span></h1>
         <p className="hero-copy">Create events, share the details, and keep your campus community in sync.</p>
+        {DEMO_MODE && <p className="demo-note">LIVE DEMO · Data is saved in this browser only</p>}
       </section>
 
       {error && <div className="alert" role="alert">{error}</div>}
@@ -110,29 +137,13 @@ export default function App() {
       <section className="content-grid">
         <form className="panel event-form" onSubmit={submitForm}>
           <div className="panel-heading">
-            <div>
-              <p className="eyebrow">EVENT MANAGER</p>
-              <h2>{editingId ? "Update event" : "Create an event"}</h2>
-            </div>
+            <div><p className="eyebrow">EVENT MANAGER</p><h2>{editingId ? "Update event" : "Create an event"}</h2></div>
             <span className="heading-icon">✦</span>
           </div>
-
-          <label>
-            Event title
-            <input name="title" value={form.title} onChange={updateField} maxLength="120" placeholder="e.g. Annual Tech Fest" required />
-          </label>
-          <label>
-            Venue
-            <input name="venue" value={form.venue} onChange={updateField} maxLength="160" placeholder="e.g. Main Auditorium" required />
-          </label>
-          <label>
-            Date and time
-            <input name="eventDate" type="datetime-local" value={form.eventDate} onChange={updateField} required />
-          </label>
-          <label>
-            Description <span className="optional">(optional)</span>
-            <textarea name="description" value={form.description} onChange={updateField} maxLength="2000" rows="4" placeholder="What should attendees know?" />
-          </label>
+          <label>Event title<input name="title" value={form.title} onChange={updateField} maxLength="120" placeholder="e.g. Annual Tech Fest" required /></label>
+          <label>Venue<input name="venue" value={form.venue} onChange={updateField} maxLength="160" placeholder="e.g. Main Auditorium" required /></label>
+          <label>Date and time<input name="eventDate" type="datetime-local" value={form.eventDate} onChange={updateField} required /></label>
+          <label>Description <span className="optional">(optional)</span><textarea name="description" value={form.description} onChange={updateField} maxLength="2000" rows="4" placeholder="What should attendees know?" /></label>
           <div className="form-actions">
             <button className="primary-button" disabled={saving}>{saving ? "Saving..." : editingId ? "Save changes" : "Publish event"}</button>
             {editingId && <button className="quiet-button" type="button" onClick={resetForm}>Cancel</button>}
@@ -141,43 +152,26 @@ export default function App() {
 
         <section className="events-section">
           <div className="section-heading">
-            <div>
-              <p className="eyebrow">WHAT'S HAPPENING</p>
-              <h2>Campus events</h2>
-            </div>
+            <div><p className="eyebrow">WHAT'S HAPPENING</p><h2>Campus events</h2></div>
             <span className="count-pill">{events.length} {events.length === 1 ? "EVENT" : "EVENTS"}</span>
           </div>
-
-          {loading ? (
-            <div className="empty-state">Loading events...</div>
-          ) : events.length === 0 ? (
-            <div className="empty-state">
-              <span className="empty-icon">✧</span>
-              <h3>No events yet</h3>
-              <p>Your next campus highlight starts with the first event.</p>
-            </div>
+          {loading ? <div className="empty-state">Loading events...</div> : events.length === 0 ? (
+            <div className="empty-state"><span className="empty-icon">✧</span><h3>No events yet</h3><p>Your next campus highlight starts with the first event.</p></div>
           ) : (
             <div className="event-list">
               {events.map((item) => (
                 <article className="event-card" key={item.id}>
-                  <div className="event-card-top">
-                    <span className="event-tag">CAMPUS EVENT</span>
-                    <span className="event-date">{formatDate(item.eventDate)}</span>
-                  </div>
+                  <div className="event-card-top"><span className="event-tag">CAMPUS EVENT</span><span className="event-date">{formatDate(item.eventDate)}</span></div>
                   <h3>{item.title}</h3>
                   <p className="event-venue">⌖ {item.venue}</p>
                   {item.description && <p className="event-description">{item.description}</p>}
-                  <div className="card-actions">
-                    <button className="quiet-button" onClick={() => startEdit(item)}>Edit</button>
-                    <button className="delete-button" onClick={() => deleteEvent(item.id)}>Delete</button>
-                  </div>
+                  <div className="card-actions"><button className="quiet-button" onClick={() => startEdit(item)}>Edit</button><button className="delete-button" onClick={() => deleteEvent(item.id)}>Delete</button></div>
                 </article>
               ))}
             </div>
           )}
         </section>
       </section>
-
       <footer>CampusConnect <span>·</span> Built to bring campus communities together.</footer>
     </main>
   );
