@@ -71,3 +71,5 @@ footer span { color: var(--accent); padding: 0 5px; }
   .hero h1 { letter-spacing: -1.8px; }
   .event-form { padding: 19px; }
 }
+
+.demo-note { display: inline-block; margin-top: 12px; color: #79e0c3; border: 1px solid rgba(121,224,195,.28); border-radius: 99px; padding: 7px 11px; font-size: 10px; font-weight: 700; letter-spacing: 1px; }
