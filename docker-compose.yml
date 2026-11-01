@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: campusconnect-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: campusconnect
+      MYSQL_USER: campus_user
+      MYSQL_PASSWORD: campus_dev_password
+      MYSQL_ROOT_PASSWORD: root_dev_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - campusconnect_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_dev_password"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  campusconnect_data:
